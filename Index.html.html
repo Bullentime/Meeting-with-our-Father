@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The God Meeting Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F0EDE6; --sheet:#F7F5F0; --ink:#141414; --ink-soft:#4A4740; --rule:#C9C4B8;
+  --field:#FFFFFF; --accent:#2F3B2F; --accent-ink:#F7F5F0; --mark:#6B7A5E;
+  --serif:"Instrument Serif", "Times New Roman", Georgia, serif;
+  --sans:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#16171A; --sheet:#1E1F22; --ink:#EDEAE2; --ink-soft:#A8A498; --rule:#3A3B3E;
+    --field:#25262A; --accent:#C9D3BC; --accent-ink:#16171A; --mark:#9DAE8C; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#16171A; --sheet:#1E1F22; --ink:#EDEAE2; --ink-soft:#A8A498; --rule:#3A3B3E;
+  --field:#25262A; --accent:#C9D3BC; --accent-ink:#16171A; --mark:#9DAE8C; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--mark);outline-offset:3px}
+.wrap{max-width:620px;margin:0 auto;padding:28px 22px 120px}
+.handle{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--ink-soft);text-align:center;margin:4px 0 0}
+h1,h2{font-family:var(--serif);font-weight:400;letter-spacing:-.01em;margin:0}
+h1{font-size:clamp(52px,14vw,84px);line-height:.92;text-align:center}
+.lede{text-align:center;color:var(--ink-soft);max-width:30ch;margin:22px auto 0}
+.tagline{border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;text-align:center;padding:12px 8px;margin:40px 0 0;text-transform:uppercase}
+.primary{display:block;width:100%;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:16px 20px;font-weight:600;font-size:16px;margin-top:32px}
+.ghost{background:none;border:1px solid var(--ink);border-radius:999px;padding:12px 18px;font-weight:500;font-size:15px}
+.textbtn{background:none;border:0;padding:6px 0;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px;font-size:15px}
+.section-title{font-family:var(--serif);font-size:30px;margin:52px 0 6px}
+.empty{color:var(--ink-soft)}
+.entries{list-style:none;padding:0;margin:0}
+.entries li{border-top:1px solid var(--rule)}
+.entries li:last-child{border-bottom:1px solid var(--rule)}
+.entry-btn{display:flex;gap:14px;align-items:baseline;width:100%;text-align:left;background:none;border:0;padding:16px 2px}
+.entry-date{font-family:var(--serif);font-size:22px;white-space:nowrap}
+.entry-snippet{color:var(--ink-soft);font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.draft{font-size:12px;border:1px solid var(--ink-soft);border-radius:999px;padding:1px 8px;color:var(--ink-soft);white-space:nowrap}
+
+/* meeting */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding:14px 22px 12px;border-bottom:1px solid var(--rule)}
+.bar-inner{max-width:620px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.dots{display:flex;gap:6px;flex:1;justify-content:center}
+.dot{width:30px;height:30px;border-radius:50%;border:1px solid var(--ink-soft);display:grid;place-items:center;font-family:var(--mono);font-size:11px;color:var(--ink-soft);background:none;padding:0}
+.dot.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.dot.done{border-color:var(--ink);color:var(--ink)}
+.saved{font-size:13px;color:var(--ink-soft);min-width:52px;text-align:right}
+.step-num{width:62px;height:62px;border:1px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:15px;margin:28px auto 22px}
+.step-title{text-align:center;font-size:clamp(44px,12vw,64px);line-height:.95}
+.step-sub{display:block;font-size:.72em;margin-top:6px}
+.teach{text-align:center;margin:26px auto 0;max-width:34ch}
+.teach p{margin:0}
+.teach .gap{height:12px}
+.prompt{margin-top:30px}
+.prompt label{display:block;font-weight:500;margin-bottom:8px}
+textarea{width:100%;min-height:96px;resize:none;border:1px solid var(--rule);background:var(--field);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:16px;line-height:1.6;overflow:hidden}
+textarea:focus{border-color:var(--ink);outline:none}
+.timer{margin:30px auto 0;text-align:center;border:1px solid var(--rule);border-radius:20px;padding:22px 18px;background:var(--sheet)}
+.timer-time{font-family:var(--serif);font-size:64px;line-height:1}
+.timer-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.chip{border:1px solid var(--ink-soft);background:none;border-radius:999px;padding:8px 16px;font-size:15px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.timer-note{color:var(--ink-soft);font-size:14px;margin:12px 0 0}
+.nav{display:flex;gap:12px;margin-top:40px}
+.nav .primary{margin:0;flex:1}
+.nav .ghost{flex:0 0 auto}
+
+/* close + view */
+.prayer{font-family:var(--serif);font-size:32px;line-height:1.15;text-align:center;margin:28px auto 0;max-width:20ch}
+.produced{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.v-step{margin-top:40px;border-top:1px solid var(--ink);padding-top:18px}
+.v-step h2{font-size:34px}
+.v-q{font-weight:500;margin:18px 0 4px}
+.v-a{margin:0;white-space:pre-wrap}
+.v-a.none{color:var(--ink-soft);font-style:italic}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:20px}
+.note{font-size:14px;color:var(--ink-soft);text-align:center;margin-top:16px}
+@media (prefers-reduced-motion: no-preference){
+  .fade{animation:fade .5s ease both}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+}
+</style>
+</head>
+<body>
+<main id="app"><div class="wrap"><p class="handle">@MRDARYLBLACK</p><p class="lede">Opening your journal…</p></div></main>
+<script>
+(function(){
+'use strict';
+
+const STEPS = [
+  { key:'silence', name:'Silence.', sub:'Hear Before You Speak',
+    teach:[['God doesn’t compete with noise.','Sit still for 5 to 10 minutes.'],['If you don’t create space, you won’t recognize His voice.','Silence is where clarity begins.']],
+    prompts:['What am I feeling right now?','What thoughts keep repeating?','What is God bringing to my attention?'],
+    tag:'Clarity starts where noise ends.', timer:true },
+  { key:'surrender', name:'Surrender.', sub:'Release Control',
+    teach:[['You don’t come to inform God, you come to align with Him.'],['Let go of your timeline.','Let go of your outcome.','Let go of control, open your hands.']],
+    prompts:['What am I holding too tightly?','What outcome am I trying to control?','What do I need to release?'],
+    tag:'Surrender is where alignment begins.' },
+  { key:'seek', name:'Seek.', sub:'Ask Better Questions',
+    teach:[['Better questions lead to better direction.','Move from frustration to curiosity.'],['Stop asking: “Why is this happening?”','Start asking: “What are You teaching me?”']],
+    prompts:['What are You showing me right now?','What do I need to stop doing?','What am I avoiding?'],
+    tag:'The quality of your questions determines the clarity of your direction.' },
+  { key:'strategy', name:'Strategy.', sub:'Capture Clarity',
+    teach:[['Write everything down.','Thoughts. Impressions. Direction.'],['Clarity not captured is clarity lost.']],
+    prompts:['What action steps am I sensing?','Who do I need to talk to?','What is my next right step?'],
+    extra:'Thoughts, impressions, direction — anything else He’s showing you',
+    tag:'Clarity that isn’t captured will be forgotten.' },
+  { key:'step', name:'Step.', sub:'Move Immediately',
+    teach:[['A real meeting produces movement.','You don’t need full clarity, you need your next step.'],['Even small steps create momentum.']],
+    prompts:['What will I do today?','What will I do this week?','What is one step I can take right now?'],
+    tag:'Obedience creates momentum.' }
+];
+const FRUITS = ['Clarity','Correction','Direction','Conviction'];
+
+const app = document.getElementById('app');
+let meetings = [];
+let current = null;   // meeting being edited
+let stepIdx = 0;
+let view = 'home';
+let viewing = null;
+
+/* ---------- storage ---------- */
+const LS_KEY = 'godMeetingJournal.v1';
+const store = {
+  mode:'memory', db:null, uid:null,
+  async init(){
+    let db=null, user=null;
+    try{
+      if (window.claude && typeof window.claude.use === 'function'){
+        [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+      }
+    }catch(e){ db=null; }
+    if (db && user){
+      try{ const id = await user.id(); if (id){ this.db=db; this.uid=id; this.mode='cloud'; } }catch(e){}
+    }
+    if (this.mode!=='cloud'){
+      try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); this.mode='local'; }catch(e){ this.mode='memory'; }
+    }
+  },
+  col(){ return this.db.collection('data/users/'+this.uid); },
+  async list(){
+    if (this.mode==='cloud'){
+      const snap = await this.col().get();
+      return snap.docs.filter(d=>d.exists).map(d=>JSON.parse(JSON.stringify(d.data())));
+    }
+    if (this.mode==='local'){
+      try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }catch(e){ return []; }
+    }
+    return [];
+  },
+  writing:{}, dirty:{},
+  async save(m){
+    if (this.mode==='cloud'){
+      if (this.writing[m.id]){ this.dirty[m.id]=m; return; }
+      this.writing[m.id]=true;
+      try{ await this.col().doc(m.id).set(JSON.parse(JSON.stringify(m))); }
+      finally{
+        this.writing[m.id]=false;
+        const next=this.dirty[m.id]; delete this.dirty[m.id];
+        if (next) await this.save(next);
+      }
+      return;
+    }
+    if (this.mode==='local'){
+      try{ localStorage.setItem(LS_KEY, JSON.stringify(meetings)); }catch(e){}
+    }
+  },
+  async remove(id){
+    if (this.mode==='cloud'){ await this.col().doc(id).delete(); return; }
+    if (this.mode==='local'){ try{ localStorage.setItem(LS_KEY, JSON.stringify(meetings)); }catch(e){} }
+  }
+};
+
+/* ---------- helpers ---------- */
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2,'0');
+const fmtDate = ts => new Date(ts).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+const fmtLong = ts => new Date(ts).toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+const ans = (m,s,q) => (m.answers && m.answers[s+'.'+q]) || '';
+function sortMeetings(){ meetings.sort((a,b)=>b.createdAt-a.createdAt); }
+function snippet(m){
+  const order=[['step',2],['step',0],['strategy',2],['silence',2],['silence',0]];
+  for (const [s,q] of order){ const t=ans(m,s,q).trim(); if (t) return t.split('\n')[0]; }
+  return 'No words written yet';
+}
+function autosize(t){ t.style.height='auto'; t.style.height=(t.scrollHeight+2)+'px'; }
+
+let saveTimer=null;
+function setSaved(text){ const el=document.getElementById('saved'); if (el) el.textContent=text; }
+function queueSave(){
+  if (!current) return;
+  current.updatedAt=Date.now();
+  setSaved('Saving…');
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    try{ await store.save(current); setSaved(store.mode==='memory'?'Not saved':'Saved'); }
+    catch(e){ setSaved('Not saved'); }
+  },700);
+}
+async function flushSave(){
+  clearTimeout(saveTimer);
+  if (current){ try{ await store.save(current); }catch(e){} }
+}
+
+/* ---------- timer + chime ---------- */
+let timer={total:300,left:300,running:false,id:null};
+function chime(){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    [523.25,659.25,783.99].forEach((f,i)=>{
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type='sine'; o.frequency.value=f;
+      const t=ctx.currentTime+i*0.35;
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.18,t+0.05); g.gain.exponentialRampToValueAtTime(0.0001,t+2.2);
+      o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+2.3);
+    });
+  }catch(e){}
+}
+function timerText(){ return pad(Math.floor(timer.left/60))+':'+pad(timer.left%60); }
+function paintTimer(){
+  const t=document.getElementById('tt'); if (t) t.textContent=timerText();
+  const b=document.getElementById('tgo'); if (b) b.textContent= timer.running?'Pause':(timer.left===0?'Sit again':(timer.left<timer.total?'Resume':'Begin stillness'));
+  const n=document.getElementById('tnote'); if (n) n.textContent = timer.left===0 ? 'Take a breath, then write what surfaced.' : (timer.running ? 'Put the pen down. Just be still.' : 'A soft chime will sound when the time is up.');
+  document.querySelectorAll('[data-min]').forEach(c=>c.setAttribute('aria-pressed', String(timer.total===+c.dataset.min*60)));
+}
+function stopTimer(){ clearInterval(timer.id); timer.running=false; }
+function toggleTimer(){
+  if (timer.running){ stopTimer(); paintTimer(); return; }
+  if (timer.left===0) timer.left=timer.total;
+  timer.running=true;
+  timer.id=setInterval(()=>{
+    timer.left=Math.max(0,timer.left-1);
+    if (timer.left===0){ stopTimer(); chime(); }
+    paintTimer();
+  },1000);
+  paintTimer();
+}
+
+/* ---------- views ---------- */
+function render(){
+  window.scrollTo(0,0);
+  if (view==='home') return renderHome();
+  if (view==='meeting') return renderStep();
+  if (view==='close') return renderClose();
+  if (view==='entry') return renderEntry();
+}
+
+function renderHome(){
+  sortMeetings();
+  const draft = meetings.find(m=>m.status==='draft');
+  const list = meetings.length ? `<ul class="entries">${meetings.map(m=>`
+      <li><button class="entry-btn" data-open="${esc(m.id)}">
+        <span class="entry-date">${esc(fmtDate(m.createdAt))}</span>
+        <span class="entry-snippet">${esc(snippet(m))}</span>
+        ${m.status==='draft'?'<span class="draft">In progress</span>':''}
+      </button></li>`).join('')}</ul>`
+    : `<p class="empty">Your meetings will gather here. Begin the first one when you’re ready.</p>`;
+  const storeNote = store.mode==='cloud' ? 'Your entries are private to you and saved to your account.'
+    : store.mode==='local' ? 'Your entries are saved in this browser on this device.'
+    : 'Saving isn’t available here, so entries last only until you close this page.';
+  app.innerHTML = `<div class="wrap fade">
+    <p class="handle">@MRDARYLBLACK</p>
+    <h1 style="margin-top:40px">The God<br>Meeting</h1>
+    <p class="lede">Most people talk to God. Few people meet with Him. This is your space to listen, write, and move.</p>
+    ${draft?`<button class="primary" data-resume="${esc(draft.id)}">Continue today’s meeting</button>
+             <p class="note"><button class="textbtn" data-new>Or begin a new meeting</button></p>`
+           :`<button class="primary" data-new>Begin a meeting</button>`}
+    <h2 class="section-title">Past meetings</h2>
+    ${list}
+    <div class="row" style="justify-content:center">
+      ${meetings.length?'<button class="ghost" data-export>Download my journal</button><button class="ghost" data-backup>Save a backup</button>':''}
+      <button class="textbtn" data-restore>Restore from backup</button>
+    </div>
+    <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+    <p class="note" id="exportMsg" role="status"></p>
+    <p class="note">${storeNote}</p>
+    <p class="tagline">Don’t just talk to God. Learn how to meet with Him.</p>
+  </div>`;
+}
+
+function renderStep(){
+  const s=STEPS[stepIdx];
+  const dots=STEPS.map((x,i)=>{
+    const filled = [0,1,2].some(q=>ans(current,x.key,q).trim());
+    return `<button class="dot ${i===stepIdx?'on':''} ${filled&&i!==stepIdx?'done':''}" data-go="${i}" aria-label="Step ${i+1}: ${esc(x.name)}" ${i===stepIdx?'aria-current="step"':''}>${pad(i+1)}</button>`;
+  }).join('');
+  const teach=s.teach.map(g=>g.map(l=>`<p>${esc(l)}</p>`).join('')).join('<div class="gap"></div>');
+  const prompts=s.prompts.map((p,q)=>`
+    <div class="prompt">
+      <label for="q${q}">${esc(p)}</label>
+      <textarea id="q${q}" data-q="${q}" rows="3">${esc(ans(current,s.key,q))}</textarea>
+    </div>`).join('');
+  const extra = s.extra ? `<div class="prompt"><label for="qx">${esc(s.extra)}</label>
+      <textarea id="qx" data-q="x" rows="4">${esc(ans(current,s.key,'x'))}</textarea></div>` : '';
+  const timerHtml = s.timer ? `<div class="timer" role="group" aria-label="Stillness timer">
+      <div class="timer-time" id="tt" aria-live="off">${timerText()}</div>
+      <div class="timer-row">
+        <button class="chip" data-min="5">5 min</button>
+        <button class="chip" data-min="10">10 min</button>
+      </div>
+      <div class="timer-row"><button class="ghost" id="tgo">Begin stillness</button></div>
+      <p class="timer-note" id="tnote"></p>
+    </div>` : '';
+  const last = stepIdx===STEPS.length-1;
+  app.innerHTML = `
+  <div class="bar"><div class="bar-inner">
+    <button class="textbtn" data-home>Close</button>
+    <div class="dots">${dots}</div>
+    <span class="saved" id="saved"></span>
+  </div></div>
+  <div class="wrap fade">
+    <div class="step-num">${pad(stepIdx+1)}</div>
+    <h2 class="step-title">${stepIdx+1}. ${esc(s.name)}<span class="step-sub">${esc(s.sub)}</span></h2>
+    <div class="teach">${teach}</div>
+    ${timerHtml}
+    ${prompts}
+    ${extra}
+    <div class="nav">
+      ${stepIdx>0?'<button class="ghost" data-prev>Back</button>':''}
+      <button class="primary" data-next>${last?'Finish meeting':'Next: '+esc(STEPS[stepIdx+1].name.replace('.',''))}</button>
+    </div>
+    <p class="tagline">${esc(s.tag)}</p>
+  </div>`;
+  app.querySelectorAll('textarea').forEach(t=>{
+    autosize(t);
+    t.addEventListener('input',()=>{
+      autosize(t);
+      current.answers[s.key+'.'+t.dataset.q]=t.value;
+      queueSave();
+    });
+  });
+  if (s.timer) paintTimer();
+}
+
+function renderClose(){
+  const p=current.produced||[];
+  app.innerHTML = `<div class="wrap fade">
+    <p class="handle">@MRDARYLBLACK</p>
+    <h1 style="margin-top:40px;font-size:clamp(44px,12vw,64px)">Every meeting with God should produce something.</h1>
+    <p class="lede">What did this meeting produce?</p>
+    <div class="produced">${FRUITS.map(f=>`<button class="chip" data-fruit="${f}" aria-pressed="${p.includes(f)}">${f}</button>`).join('')}</div>
+    <p class="lede" style="margin-top:44px">If you’re a person of faith, try this simple prayer:</p>
+    <p class="prayer">“God, who’s speaking right now? Help me be led by the right voice.”</p>
+    <button class="primary" data-done>Save and close</button>
+    <p class="note"><button class="textbtn" data-back-step>Back to Step 5</button></p>
+    <p class="tagline">So show up. Be still. Listen. Write. Move.</p>
+  </div>`;
+}
+
+function renderEntry(){
+  const m=viewing;
+  const steps=STEPS.map((s,i)=>`
+    <section class="v-step">
+      <h2>${i+1}. ${esc(s.name)} ${esc(s.sub)}</h2>
+      ${s.prompts.map((p,q)=>{ const a=ans(m,s.key,q).trim();
+        return `<p class="v-q">${esc(p)}</p><p class="v-a ${a?'':'none'}">${a?esc(a):'Left blank'}</p>`; }).join('')}
+      ${s.extra && ans(m,s.key,'x').trim() ? `<p class="v-q">Thoughts, impressions, direction</p><p class="v-a">${esc(ans(m,s.key,'x').trim())}</p>`:''}
+    </section>`).join('');
+  const prod=(m.produced||[]).length?`<p class="lede">This meeting produced: ${esc(m.produced.join(', '))}</p>`:'';
+  app.innerHTML = `<div class="wrap fade">
+    <button class="textbtn" data-home>All meetings</button>
+    <h1 style="margin-top:28px;font-size:clamp(40px,11vw,58px)">${esc(fmtLong(m.createdAt))}</h1>
+    ${prod}
+    <div class="row" style="justify-content:center">
+      <button class="ghost" data-edit="${esc(m.id)}">Edit this meeting</button>
+      <button class="textbtn" data-del="${esc(m.id)}">Delete</button>
+    </div>
+    ${steps}
+    <p class="tagline">Obedience creates momentum.</p>
+  </div>`;
+}
+
+/* ---------- export / backup ---------- */
+function stamp(){ const d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function journalText(){
+  sortMeetings();
+  const line='—'.repeat(28);
+  let out='THE GOD MEETING JOURNAL\nExported '+fmtLong(Date.now())+'\n'+meetings.length+' meeting'+(meetings.length===1?'':'s')+'\n\n';
+  meetings.forEach(m=>{
+    out+=line+'\n'+fmtLong(m.createdAt)+(m.status==='draft'?' (in progress)':'')+'\n';
+    if ((m.produced||[]).length) out+='This meeting produced: '+m.produced.join(', ')+'\n';
+    out+=line+'\n\n';
+    STEPS.forEach((s,i)=>{
+      out+=(i+1)+'. '+s.name+' '+s.sub+'\n\n';
+      s.prompts.forEach((p,q)=>{ const a=ans(m,s.key,q).trim(); out+=p+'\n'+(a||'(left blank)')+'\n\n'; });
+      const x=ans(m,s.key,'x').trim(); if (s.extra && x) out+='Thoughts, impressions, direction\n'+x+'\n\n';
+    });
+    out+='\n';
+  });
+  return out;
+}
+function exportMsg(t){ const el=document.getElementById('exportMsg'); if (el) el.textContent=t; }
+async function downloadFile(filename, text, type){
+  let dl=null;
+  try{ if (window.claude && typeof window.claude.use==='function') dl=await window.claude.use('downloads'); }catch(e){ dl=null; }
+  if (dl){
+    try{ await dl.save({filename, data:text}); return 'ok'; }
+    catch(e){ return e && e.code==='declined' ? 'declined' : 'failed'; }
+  }
+  try{
+    const blob=new Blob([text],{type}); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    return 'ok';
+  }catch(e){ return 'failed'; }
+}
+async function restoreFrom(file){
+  let data;
+  try{ data=JSON.parse(await file.text()); }catch(e){ exportMsg('That file isn’t a journal backup. Choose a .json file saved with “Save a backup.”'); return; }
+  const list=Array.isArray(data)?data:(data && Array.isArray(data.meetings)?data.meetings:null);
+  if (!list){ exportMsg('That file isn’t a journal backup. Choose a .json file saved with “Save a backup.”'); return; }
+  const have=new Set(meetings.map(m=>m.id)); let added=0;
+  for (const m of list){
+    if (!m || typeof m.id!=='string' || typeof m.createdAt!=='number' || have.has(m.id)) continue;
+    const clean={ id:m.id, createdAt:m.createdAt, updatedAt:+m.updatedAt||m.createdAt, status:m.status==='draft'?'draft':'done',
+      answers:(m.answers && typeof m.answers==='object')?Object.fromEntries(Object.entries(m.answers).filter(([k,v])=>typeof v==='string')):{},
+      produced:Array.isArray(m.produced)?m.produced.filter(f=>FRUITS.includes(f)):[] };
+    meetings.push(clean); have.add(clean.id); added++;
+    try{ await store.save(clean); }catch(e){}
+  }
+  render();
+  exportMsg(added ? 'Restored '+added+' meeting'+(added===1?'':'s')+'.' : 'Everything in that backup is already in your journal.');
+}
+
+/* ---------- actions ---------- */
+function newMeeting(){
+  const now=Date.now();
+  current={ id:'m'+now+Math.random().toString(36).slice(2,6), createdAt:now, updatedAt:now, status:'draft', answers:{}, produced:[] };
+  meetings.push(current);
+  stepIdx=0; timer={total:300,left:300,running:false,id:null};
+  view='meeting'; render();
+  store.save(current).catch(()=>{});
+}
+function openMeeting(id, edit){
+  const m=meetings.find(x=>x.id===id); if (!m) return;
+  if (edit || m.status==='draft'){
+    current=m; stepIdx=0; view='meeting';
+  } else { viewing=m; view='entry'; }
+  render();
+}
+
+app.addEventListener('click', async e=>{
+  const b=e.target.closest('button'); if (!b) return;
+  const d=b.dataset;
+  if ('new' in d) return newMeeting();
+  if (d.resume) return openMeeting(d.resume,true);
+  if (d.open) return openMeeting(d.open,false);
+  if (d.edit) return openMeeting(d.edit,true);
+  if ('home' in d){ stopTimer(); await flushSave(); current=null; view='home'; return render(); }
+  if (d.go!==undefined){ stopTimer(); stepIdx=+d.go; return render(); }
+  if ('prev' in d){ stopTimer(); stepIdx--; return render(); }
+  if ('next' in d){
+    stopTimer();
+    if (stepIdx<STEPS.length-1){ stepIdx++; render(); }
+    else { view='close'; render(); }
+    return;
+  }
+  if ('backStep' in d){ stepIdx=STEPS.length-1; view='meeting'; return render(); }
+  if (d.fruit){
+    const p=current.produced||(current.produced=[]);
+    const i=p.indexOf(d.fruit); i>=0?p.splice(i,1):p.push(d.fruit);
+    b.setAttribute('aria-pressed', String(i<0));
+    return queueSave();
+  }
+  if ('done' in d){
+    current.status='done'; current.updatedAt=Date.now();
+    await flushSave();
+    viewing=current; current=null; view='entry'; return render();
+  }
+  if (d.min){ if (!timer.running){ timer.total=+d.min*60; timer.left=timer.total; } paintTimer(); return; }
+  if (b.id==='tgo') return toggleTimer();
+  if ('export' in d){
+    const r=await downloadFile('god-meeting-journal-'+stamp()+'.txt', journalText(), 'text/plain');
+    return exportMsg(r==='ok'?'Your journal is downloading.':r==='declined'?'':'The download didn’t start. Try again in a moment.');
+  }
+  if ('backup' in d){
+    const r=await downloadFile('god-meeting-backup-'+stamp()+'.json', JSON.stringify({app:'god-meeting-journal',version:1,meetings},null,2), 'application/json');
+    return exportMsg(r==='ok'?'Backup saved. Keep it somewhere safe to restore your journal later.':r==='declined'?'':'The backup didn’t save. Try again in a moment.');
+  }
+  if ('restore' in d){ const f=document.getElementById('restoreFile'); if (f) f.click(); return; }
+  if (d.del){
+    if (!confirm('Delete this meeting? This can’t be undone.')) return;
+    meetings=meetings.filter(m=>m.id!==d.del);
+    try{ await store.remove(d.del); }catch(e){}
+    view='home'; return render();
+  }
+});
+app.addEventListener('change', e=>{
+  if (e.target.id==='restoreFile' && e.target.files && e.target.files[0]) restoreFrom(e.target.files[0]);
+});
+window.addEventListener('pagehide', ()=>{ flushSave(); });
+
+/* ---------- boot ---------- */
+(async function boot(){
+  const giveUp=new Promise(r=>setTimeout(()=>r('timeout'),10000));
+  const loaded=(async()=>{ await store.init(); return store.list(); })();
+  let result;
+  try{ result=await Promise.race([loaded,giveUp]); }catch(e){ result=[]; }
+  if (result==='timeout'){ store.mode = store.mode==='cloud'?'cloud':'memory'; result=[]; }
+  meetings=Array.isArray(result)?result:[];
+  render();
+})();
+})();
+</script>
+</body>
+</html>
